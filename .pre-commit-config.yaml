@@ -1,0 +1,28 @@
+# Language-agnostic pre-commit hooks.
+# Language-specific templates should extend this with their own formatting hooks.
+#
+# To extend in a derived template, copy this file and add language-specific hooks
+# (e.g., biome, prettier, eslint for TypeScript; biome, prettier for Java).
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+      - id: check-json
+        # Override exclude pattern in derived templates if needed
+        exclude: "biome\\.jsonc"
+      - id: check-toml
+      - id: check-xml
+      - id: end-of-file-fixer
+        exclude: ^\.idea/
+      - id: trailing-whitespace
+        exclude: ^\.idea/
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ["--fix=lf"]

@@ -1,0 +1,71 @@
+# Language-agnostic merge group jobs.
+# Derived templates should extend this with language-specific check jobs
+# (e.g., lint, typecheck, test, build).
+
+on:
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Run pre-commit hooks to verify basic hygiene
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - uses: pre-commit/action@v3.0.1
+
+  # Lint markdown files
+  reviewdog-markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: reviewdog/action-markdownlint@v0.26.2
+        with:
+          reporter: github-pr-check
+          fail_on_error: true
+          filter_mode: nofilter
+
+  # Lint YAML files
+  reviewdog-yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: reviewdog/action-yamllint@v1.21.0
+        with:
+          reporter: github-pr-check
+          fail_on_error: true
+          filter_mode: nofilter
+
+  # Lint GitHub Actions workflow files
+  reviewdog-actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: reviewdog/action-actionlint@v1.69.0
+        with:
+          reporter: github-pr-check
+          fail_on_error: true
+          filter_mode: nofilter
+
+  # Gate job that requires all checks to pass
+  # Derived templates should add their language-specific jobs to the 'needs' array
+  all-checks:
+    name: All checks
+    if: ${{ !cancelled() }}
+    needs:
+      [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
