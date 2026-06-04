@@ -47,4 +47,6 @@ JUSTFILE_BRANCH
 
 # LLM context (Claude Code, etc.)
 .llm/
-.claude/
+/.claude/*
+!/.claude/commands/
+/.claude/settings.local.json
