@@ -61,7 +61,7 @@ jobs:
   # Derived templates should add their language-specific jobs to the 'needs' array
   all-checks:
     name: All checks
-    if: ${{ !cancelled() }}
+    if: always()
     needs:
       [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint]
     runs-on: ubuntu-latest
