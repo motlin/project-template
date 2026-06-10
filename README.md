@@ -7,7 +7,7 @@ A language-agnostic base template containing universal configuration patterns fo
 This template extracts common, language-agnostic configuration into a single reference. It provides:
 
 - Standard pre-commit hooks for file hygiene
-- Universal editor configuration
+- Universal formatting via oxfmt and markdown linting
 - Common gitignore patterns
 - Git line ending normalization
 - GitHub Actions workflow patterns
@@ -19,33 +19,41 @@ This template extracts common, language-agnostic configuration into a single ref
 
 Base hooks from `pre-commit/pre-commit-hooks`:
 
-| Hook                     | Purpose                                             |
-| ------------------------ | --------------------------------------------------- |
-| `check-yaml`             | Validate YAML syntax                                |
-| `check-json`             | Validate JSON syntax                                |
-| `check-toml`             | Validate TOML syntax                                |
-| `check-xml`              | Validate XML syntax                                 |
-| `end-of-file-fixer`      | Ensure files end with newline                       |
-| `trailing-whitespace`    | Remove trailing whitespace                          |
-| `check-added-large-files`| Prevent large files (>1MB)                          |
-| `check-case-conflict`    | Detect case-insensitive filename conflicts          |
-| `check-merge-conflict`   | Detect merge conflict markers                       |
-| `detect-private-key`     | Prevent committing private keys                     |
-| `mixed-line-ending`      | Normalize to LF line endings                        |
+| Hook                      | Purpose                                    |
+| ------------------------- | ------------------------------------------ |
+| `check-yaml`              | Validate YAML syntax                       |
+| `check-json`              | Validate JSON syntax                       |
+| `check-toml`              | Validate TOML syntax                       |
+| `check-xml`               | Validate XML syntax                        |
+| `end-of-file-fixer`       | Ensure files end with newline              |
+| `trailing-whitespace`     | Remove trailing whitespace                 |
+| `check-added-large-files` | Prevent large files (>1MB)                 |
+| `check-case-conflict`     | Detect case-insensitive filename conflicts |
+| `check-merge-conflict`    | Detect merge conflict markers              |
+| `detect-private-key`      | Prevent committing private keys            |
+| `mixed-line-ending`       | Normalize to LF line endings               |
 
-**Extending:** Add language-specific hooks (biome, prettier, eslint) in derived templates.
+Local hooks for the file types every project has:
 
-### `.editorconfig`
+| Hook                | Purpose                                            |
+| ------------------- | -------------------------------------------------- |
+| `oxfmt`             | Format markdown, json, yaml, and toml via `vp fmt` |
+| `markdownlint-cli2` | Lint markdown against `.markdownlint.jsonc`        |
 
-Universal formatting settings:
+**Hook conventions:**
 
-- UTF-8 charset
-- LF line endings
-- Final newline required
-- Trim trailing whitespace
-- Language-specific indent settings for YAML, JSON, Makefile, justfile
+- Hooks run on changed files, not all files: keep pre-commit's default `pass_filenames: true` for every formatter and linter.
+- Because hooks receive arbitrary changed-file batches, every formatter and linter must skip file types it does not handle instead of erroring. Use the tool's flag for this: `--no-error-on-unmatched-pattern` for oxfmt, `--ignore-unknown` for prettier, or the equivalent for any new tool.
 
-**Extending:** Override `indent_style` and `indent_size` for language-specific defaults.
+**Extending:** Add language-specific hooks (eslint for TypeScript, cargo fmt and clippy for Rust) in derived templates.
+
+### `vite.config.ts`
+
+Formatting configuration for oxfmt (`vp fmt`) in the `fmt` block: tabs (`useTabs` with `tabWidth` 4), print width 120, single quotes. A plain object export keeps it working without `node_modules`; vite-plus comes from mise. Note `vp fmt` ignores `.oxfmtrc.json` — the config must live in `vite.config.ts`.
+
+Tabs are the standard across all templates; the exceptions are YAML (tabs are illegal) and markdown list indentation (oxfmt emits 4 spaces, matched by `MD007` in `.markdownlint.jsonc`).
+
+**Extending:** Projects with a real Vite+ setup use `defineConfig` from `vite-plus` and add their build configuration alongside the `fmt` block.
 
 ### `.gitignore`
 
@@ -130,39 +138,44 @@ When project-template is updated:
 
 ### Alternatives Considered
 
-| Mechanism      | Pros                           | Cons                                |
-| -------------- | ------------------------------ | ----------------------------------- |
-| Git subtree    | Automatic updates              | Complex merge conflicts             |
-| Git submodule  | Version pinning                | Extra clone step, confusing UX      |
-| Symlinks       | Always in sync                 | Breaks GitHub template repos        |
-| Copy-and-extend| Simple, flexible, independent  | Manual update propagation           |
+| Mechanism       | Pros                          | Cons                           |
+| --------------- | ----------------------------- | ------------------------------ |
+| Git subtree     | Automatic updates             | Complex merge conflicts        |
+| Git submodule   | Version pinning               | Extra clone step, confusing UX |
+| Symlinks        | Always in sync                | Breaks GitHub template repos   |
+| Copy-and-extend | Simple, flexible, independent | Manual update propagation      |
 
 ## Derived Templates
 
 Templates that extend this base:
 
 - **typescript-template**: TypeScript/Node.js projects
-  - Adds: biome, prettier, eslint hooks
-  - Adds: npm ecosystem to dependabot
-  - Adds: lint, typecheck, test, build jobs
+    - Adds: the full Vite+ toolchain (`vp check`, `vp fmt`, `vp lint`)
+    - Adds: npm ecosystem to dependabot
+    - Adds: lint, typecheck, test, build jobs
+
+- **rust-template**: Rust projects
+    - Adds: cargo fmt (`hard_tabs`) and clippy hooks
+    - Adds: cargo ecosystem to dependabot
+    - Adds: nextest, llvm-cov jobs
 
 - **java-template**: Java/Maven projects
-  - Adds: biome (JSON only), prettier hooks
-  - Adds: maven ecosystem to dependabot
-  - Adds: maven-test, reviewdog jobs
+    - Adds: biome (JSON only), prettier hooks
+    - Adds: maven ecosystem to dependabot
+    - Adds: maven-test, reviewdog jobs
 
 ## Creating a New Language Template
 
 1. Create a new repository
 2. Copy all files from project-template
 3. Add language-specific configuration:
-   - Extend `.pre-commit-config.yaml` with formatters/linters
-   - Extend `.gitignore` with build artifacts
-   - Add package ecosystem to `.github/dependabot.yml`
-   - Add build/test jobs to `.github/workflows/merge-group.yml`
-   - Update `all-checks.needs` array
-   - Add auto-fix jobs to `.github/workflows/pull-request.yml`
-   - Replace placeholder in `.github/workflows/push.yml`
+    - Extend `.pre-commit-config.yaml` with formatters/linters
+    - Extend `.gitignore` with build artifacts
+    - Add package ecosystem to `.github/dependabot.yml`
+    - Add build/test jobs to `.github/workflows/merge-group.yml`
+    - Update `all-checks.needs` array
+    - Add auto-fix jobs to `.github/workflows/pull-request.yml`
+    - Replace placeholder in `.github/workflows/push.yml`
 4. Add language-specific files (package.json, pom.xml, etc.)
 5. Update README.md with language-specific documentation
 
