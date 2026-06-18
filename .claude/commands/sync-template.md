@@ -6,7 +6,6 @@ This is the base template for all projects. It manages foundational files that e
 
 ### Core Files
 
-- `.gitattributes` - Git attributes
 - `.gitignore` - Git ignore patterns
 - `.pre-commit-config.yaml` - File hygiene, oxfmt, and markdownlint hooks
 - `vite.config.ts` - oxfmt formatting settings in the `fmt` block (tabs, width 120)
@@ -58,6 +57,39 @@ Ensure foundational files are up to date:
 
 - LICENSE should be Apache 2.0
 - .gitattributes should handle common file types
+
+### .gitattributes (conditional)
+
+`.gitattributes` is NOT copied verbatim. Generate it per repo:
+
+- **Always** include the LF-normalization base:
+
+  ```gitattributes
+  # Normalize all text files to LF line endings
+  * text=auto eol=lf
+  ```
+
+- **Only if** the repo has tracked `*.bat` or `*.cmd` files (`git ls-files '*.bat' '*.cmd'`),
+  append:
+
+  ```gitattributes
+  # Windows batch files need CRLF
+  *.cmd text eol=crlf
+  *.bat text eol=crlf
+  ```
+
+- **Only if** the repo has tracked `.idea` files (`git ls-files '.idea/**'`), append:
+
+  ```gitattributes
+  # Keep .idea files visible in diffs (not marked as generated)
+  /.idea/** linguist-generated=false
+  ```
+
+- **Preserve** any project-specific rules already present (e.g. `dist/** -diff`,
+  `.beads/issues.jsonl merge=beads`, language-specific `eol` overrides).
+
+The base template's own `.gitattributes` contains only the base block because it has no
+`.bat`/`.cmd`/`.idea` files.
 
 ### Step 2: Pull Improvements from Children
 
