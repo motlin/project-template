@@ -133,7 +133,10 @@ if [[ "$UPDATE_PROTECTION" == "true" ]]; then
     BP_REVIEWS=$(echo "$CURRENT_PROTECTION" | jq -c '.required_pull_request_reviews // null')
     BP_RESTRICTIONS=$(echo "$CURRENT_PROTECTION" | jq -c '.restrictions // null')
 
-    cat << EOF | gh api "repos/${REPO}/branches/${BRANCH}/protection" --method PUT --input -
+    # A 403 here means the private repo lacks GitHub Pro/Team (branch protection
+    # is a paid feature on private repos). Treat that as non-fatal so the rest of
+    # the configuration (security, Actions permissions) still runs.
+    if cat << EOF | gh api "repos/${REPO}/branches/${BRANCH}/protection" --method PUT --input - > /dev/null
 {
   "required_status_checks": {"strict": $BP_STRICT, "contexts": $BP_CONTEXTS},
   "enforce_admins": $BP_ENFORCE_ADMINS,
@@ -143,7 +146,11 @@ if [[ "$UPDATE_PROTECTION" == "true" ]]; then
   "allow_force_pushes": $BP_ALLOW_FORCE_PUSHES
 }
 EOF
-    echo "  Branch protection updated."
+    then
+        echo "  Branch protection updated."
+    else
+        echo "  WARNING: could not update branch protection (private repo without GitHub Pro/Team?). Skipping."
+    fi
 fi
 
 echo ""
