@@ -64,26 +64,26 @@ Ensure foundational files are up to date:
 
 - **Always** include the LF-normalization base:
 
-  ```gitattributes
-  # Normalize all text files to LF line endings
-  * text=auto eol=lf
-  ```
+    ```gitattributes
+    # Normalize all text files to LF line endings
+    * text=auto eol=lf
+    ```
 
 - **Only if** the repo has tracked `*.bat` or `*.cmd` files (`git ls-files '*.bat' '*.cmd'`),
   append:
 
-  ```gitattributes
-  # Windows batch files need CRLF
-  *.cmd text eol=crlf
-  *.bat text eol=crlf
-  ```
+    ```gitattributes
+    # Windows batch files need CRLF
+    *.cmd text eol=crlf
+    *.bat text eol=crlf
+    ```
 
 - **Only if** the repo has tracked `.idea` files (`git ls-files '.idea/**'`), append:
 
-  ```gitattributes
-  # Keep .idea files visible in diffs (not marked as generated)
-  /.idea/** linguist-generated=false
-  ```
+    ```gitattributes
+    # Keep .idea files visible in diffs (not marked as generated)
+    /.idea/** linguist-generated=false
+    ```
 
 - **Preserve** any project-specific rules already present (e.g. `dist/** -diff`,
   `.beads/issues.jsonl merge=beads`, language-specific `eol` overrides).
