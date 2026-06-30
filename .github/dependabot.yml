@@ -11,6 +11,8 @@ updates:
       time: '07:00'
       timezone: America/New_York
     open-pull-requests-limit: 25
+    cooldown:
+      default-days: 1
     labels:
       - 'dependencies'
     commit-message:
