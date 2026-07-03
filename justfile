@@ -17,7 +17,7 @@ mise:
 @clean: _clean-git
 
 # Run pre-commit hooks
-precommit:
+verify:
     pre-commit run --all-files
 
 # Override this with a command called `woof` which notifies you in whatever ways you prefer.
