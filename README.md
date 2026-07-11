@@ -49,7 +49,7 @@ Local hooks for the file types every project has:
 
 ### `vite.config.ts`
 
-Formatting configuration for oxfmt (`vp fmt`) in the `fmt` block: tabs (`useTabs` with `tabWidth` 4), print width 120, single quotes. A plain object export keeps it working without `node_modules`; vite-plus comes from mise. Note `vp fmt` ignores `.oxfmtrc.json` — the config must live in `vite.config.ts`.
+Formatting configuration for oxfmt (`vp fmt`) in the `fmt` block: tabs (`useTabs` with `tabWidth` 4), print width 120, double quotes. A plain object export keeps it working without `node_modules`; vite-plus comes from mise. Note `vp fmt` ignores `.oxfmtrc.json` — the config must live in `vite.config.ts`.
 
 Tabs are the standard across all templates; the exceptions are YAML (tabs are illegal) and markdown list indentation (oxfmt emits 4 spaces, matched by `MD007` in `.markdownlint.jsonc`).
 
