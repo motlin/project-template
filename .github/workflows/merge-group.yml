@@ -71,12 +71,26 @@ jobs:
           fail_on_error: true
           filter_mode: nofilter
 
+  # Security-lint GitHub Actions workflow files
+  zizmor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0
+        with:
+          # Audit only this repo's CI config; derived repos may vendor third-party workflows.
+          inputs: .github/
+          # SARIF upload requires GitHub Advanced Security, which derived private repos may lack.
+          advanced-security: false
+
   # Gate job that requires all checks to pass
   # Derived templates should add their language-specific jobs to the 'needs' array
   all-checks:
     name: All checks
     if: always()
-    needs: [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint]
+    needs: [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint, zizmor]
     runs-on: ubuntu-latest
     steps:
       - uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # release/v1
