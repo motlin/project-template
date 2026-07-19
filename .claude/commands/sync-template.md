@@ -112,7 +112,9 @@ For each project, check if foundational files match this template.
 Create tasks for mismatches:
 
 ```bash
-/Users/craig/.claude/plugins/cache/motlin-claude-code-plugins/markdown-tasks/0.18.12/skills/tasks/scripts/task_add.py ~/projects/<project>/.llm/todo.md "Update foundational files from project-template
+# Use the newest installed markdown-tasks plugin version (path rots if pinned)
+TASK_ADD=$(find /Users/craig/.claude/plugins/cache/motlin-claude-code-plugins/markdown-tasks -name task_add.py | sort --version-sort | tail -1)
+python3 "$TASK_ADD" ~/projects/<project>/.llm/todo.md "Update foundational files from project-template
   Compare and update:
   - .gitattributes
   - LICENSE (should be Apache 2.0)"
