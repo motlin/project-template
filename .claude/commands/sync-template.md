@@ -113,7 +113,7 @@ Create tasks for mismatches:
 
 ```bash
 # Use the newest installed markdown-tasks plugin version (path rots if pinned)
-TASK_ADD=$(find /Users/craig/.claude/plugins/cache/motlin-claude-code-plugins/markdown-tasks -name task_add.py | sort --version-sort | tail -1)
+TASK_ADD=$(find ~/.claude/plugins/cache/motlin-claude-code-plugins/markdown-tasks -name task_add.py | sort --version-sort | tail -1)
 python3 "$TASK_ADD" ~/projects/<project>/.llm/todo.md "Update foundational files from project-template
   Compare and update:
   - .gitattributes
