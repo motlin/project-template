@@ -1,62 +1,36 @@
+---
+description: Sync foundational files from this template to all projects and sibling templates
+argument-hint: [project-name|all]
+---
+
 # Project Template Sync
 
-This is the base template for all projects. It manages foundational files that every project should have.
+This is the base template for all projects. It manages foundational files that every
+project should have, and it is the source of truth for the sync system shared by the
+sibling templates.
 
-## Managed Files
+Template path: !`pwd`
 
-### Core Files
+## Managed files
 
-- `.gitignore` - Git ignore patterns
-- `.pre-commit-config.yaml` - File hygiene, oxfmt, and markdownlint hooks
-- `vite.config.ts` - oxfmt formatting settings in the `fmt` block (tabs, width 120)
-- `.markdownlint.jsonc` / `.markdownlint-cli2.jsonc` - Markdown lint rules
-- `LICENSE` - Apache 2.0 license
-- `README.md` - Project documentation structure
+- `.gitignore` — Git ignore patterns
+- `.pre-commit-config.yaml` — file hygiene, oxfmt, and markdownlint hooks
+- `vite.config.ts` — oxfmt formatting settings in the `fmt` block (tabs, width 120)
+- `.markdownlint.jsonc` / `.markdownlint-cli2.jsonc` — Markdown lint rules
+- `.yamllint.yaml` — YAML lint rules
+- `LICENSE` — Apache 2.0 license
+- `README.md` — project documentation structure
+- `.github/` — workflow patterns common to all projects
+- Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`,
+  `npm:vite-plus` — language-specific templates manage other tools
 
-### GitHub
+### Shared sync includes
 
-- `.github/` - Workflow patterns common to all projects
-
-### Mise (if present)
-
-- `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:vite-plus` - language-specific templates manage other tools
-
-## Version Policy
-
-- Always pin specific versions for every tool, never use "latest"
-
-## Sibling Templates
-
-This template provides the foundation for:
-
-- ~/projects/typescript-template (extends with TypeScript/Node tools)
-- ~/projects/rust-template (extends with Rust/Cargo tools)
-- ~/projects/java-template (extends with Java/Maven tools)
-
-## All Projects
-
-All projects in ~/projects should have the foundational files from this template.
-
-**Skip:**
-
-- ~/projects/open-source/ - owned by others
-- Git worktrees (non-main branches)
-- Forks (eclipse-collections, znai) - may have their own conventions
-
-## Workflow
-
-### Step 1: Update This Template
-
-Check if this template's `just` version is the latest:
-
-```bash
-mise ls-remote just | tail -1
-```
-
-Ensure foundational files are up to date:
-
-- LICENSE should be Apache 2.0
-- .gitattributes should handle common file types
+The `.claude/includes/sync-*.md` files are shared by every sibling template's
+sync-template command and must be byte-identical in every template repo. During
+Step 3, diff each sibling template's copies against this template's and stage a
+task on any difference. The sibling commands' section skeletons should also stay
+parallel to this file's.
 
 ### .gitattributes (conditional)
 
@@ -91,6 +65,60 @@ Ensure foundational files are up to date:
 The base template's own `.gitattributes` contains only the base block because it has no
 `.bat`/`.cmd`/`.idea` files.
 
+## Version policy
+
+@.claude/includes/sync-version-policy.md
+
+## Projects
+
+`$ARGUMENTS` is a project name, `all`, or empty (treated as `all`).
+
+@.claude/includes/sync-project-list.md
+
+This template's scope is every project in `~/projects`, so its `.llm/projects.yaml`
+uses `scan` and `skip` instead of an explicit `own` list:
+
+```yaml
+scan: ~/projects
+skip:
+    - ~/projects/open-source # owned by others
+    - ~/projects/eclipse-collections # forks keep their own conventions
+    - ~/projects/znai
+```
+
+Also skip git worktrees (non-main branches).
+
+### Sibling templates
+
+This template provides the foundation for:
+
+- ~/projects/typescript-template (extends with TypeScript/Node tools)
+- ~/projects/rust-template (extends with Rust/Cargo tools)
+- ~/projects/java-template (extends with Java/Maven tools)
+
+## Stale and conflicting tool configs
+
+@.claude/includes/sync-stale-configs.md
+
+## Default git test
+
+@.claude/includes/sync-git-test.md
+
+## Workflow
+
+### Step 1: Update This Template
+
+Check whether this template's pinned versions are the latest:
+
+```bash
+mise ls-remote just | tail -1
+```
+
+Ensure foundational files are up to date:
+
+- LICENSE should be Apache 2.0
+- .gitattributes should handle common file types
+
 ### Step 2: Pull Improvements from Children
 
 Check typescript-template, rust-template, and java-template for any foundational improvements:
@@ -107,20 +135,17 @@ If a child template has something better:
 
 ### Step 3: Push to All Projects
 
-For each project, check if foundational files match this template.
+For each project, check if foundational files match this template, run the stale-config
+scan, and check the default git test. For the sibling templates, also diff the shared
+sync includes for byte-identity. Create tasks for mismatches.
 
-Create tasks for mismatches:
+## Creating tasks
 
-```bash
-# Use the newest installed markdown-tasks plugin version (path rots if pinned)
-TASK_ADD=$(find ~/.claude/plugins/cache/motlin-claude-code-plugins/markdown-tasks -name task_add.py | sort --version-sort | tail -1)
-python3 "$TASK_ADD" ~/projects/<project>/.llm/todo.md "Update foundational files from project-template
-  Compare and update:
-  - .gitattributes
-  - LICENSE (should be Apache 2.0)"
-```
+@.claude/includes/sync-task-dedup.md
 
-### Task Templates
+Marker for this template: `Source: ~/projects/project-template`
+
+### Task templates
 
 **just version update:**
 
@@ -129,6 +154,7 @@ Update just <current> → <target>
   Edit .mise/config.toml
   Change: just = "<current>"
   To: just = "<target>"
+  Source: ~/projects/project-template
 ```
 
 **Pin just version (fix "latest"):**
@@ -139,6 +165,7 @@ Pin just version (currently "latest")
   Change: just = "latest"
   To: just = "<target>"
   Note: Never use "latest" - causes inconsistent builds
+  Source: ~/projects/project-template
 ```
 
 **License update:**
@@ -147,22 +174,9 @@ Pin just version (currently "latest")
 Update LICENSE to Apache 2.0
   Copy LICENSE from ~/projects/project-template/LICENSE
   Or from ~/projects/liftwizard/LICENSE
+  Source: ~/projects/project-template
 ```
 
-## Report Format
+## Report
 
-After syncing, report:
-
-### This Template Status
-
-- Current just version
-- Foundational files status
-
-### Improvements Pulled In
-
-- List any improvements from child templates
-
-### Tasks Distributed
-
-- Number of projects that received tasks
-- Breakdown by task type
+@.claude/includes/sync-report.md

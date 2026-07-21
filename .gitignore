@@ -49,4 +49,5 @@ JUSTFILE_BRANCH
 .llm/
 /.claude/*
 !/.claude/commands/
+!/.claude/includes/
 /.claude/settings.local.json
