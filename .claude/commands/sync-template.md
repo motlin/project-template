@@ -14,6 +14,7 @@ Template path: !`pwd`
 ## Managed files
 
 - `.gitignore` — Git ignore patterns
+- `.prettierignore` — oxfmt exclusions loaded alongside `.gitignore`
 - `.pre-commit-config.yaml` — file hygiene, oxfmt, and markdownlint hooks
 - `vite.config.ts` — oxfmt formatting settings in the `fmt` block (tabs, width 120)
 - `.markdownlint.jsonc` / `.markdownlint-cli2.jsonc` — Markdown lint rules
