@@ -25,6 +25,13 @@ Template path: !`pwd`
 - Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`,
   `npm:vite-plus` — language-specific templates manage other tools
 
+### Derived-template ownership
+
+Before scanning projects, read each sibling template's managed paths and project list.
+For a project owned by a sibling template, delegate overlapping paths to that sibling;
+this command owns only the remaining foundational paths. When updating a sibling
+template itself, preserve its documented language-specific specializations.
+
 ### Shared sync includes
 
 The `.claude/includes/sync-*.md` files are shared by every sibling template's
