@@ -72,6 +72,19 @@ Common patterns:
 - Windows batch files use CRLF
 - `.idea/` directory not marked as linguist-generated
 
+### `justfile`
+
+Public singular recipe parameters are command-line options with help text. Use lowercase
+kebab-case long options, such as `--output-file`, or an intentional short option. Model
+boolean behavior as semantic value-less flags such as `--warn`, `--quick`, or `--no-clean`.
+
+Private helper parameters and variadic passthrough parameters remain positional.
+Dependency expressions inside justfiles also remain positional; command-line callers use
+the option syntax.
+
+Run `just audit-just-options` to inspect every tracked root and nested justfile. Imported
+`.just` modules are included in each justfile's JSON dump.
+
 ### `.github/dependabot.yml`
 
 Base configuration for GitHub Actions updates:
