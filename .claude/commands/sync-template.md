@@ -20,6 +20,7 @@ Template path: !`pwd`
 - `LICENSE` — Apache 2.0 license
 - `README.md` — project documentation structure
 - `.github/` — workflow patterns common to all projects
+- `scripts/audit-just-options.py` — repository-wide `just` option policy audit
 - Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:vite-plus` — language-specific templates manage other tools
 
 ### Derived-template ownership
@@ -28,7 +29,7 @@ Before scanning projects, read each sibling template's managed paths and project
 
 ### Shared sync includes
 
-The `.claude/includes/sync-*.md` files are shared by every sibling template's sync-template command and must be byte-identical in every template repo. During Step 3, diff each sibling template's copies against this template's and stage a task on any difference. The sibling commands' section skeletons should also stay parallel to this file's.
+The `.claude/includes/sync-*.md` files are shared by every sibling template's sync-template command and must be byte-identical in every template repo. During Step 3, diff each sibling template's copies against this template's and stage a task on any difference. Each sibling command must reference every shared include, including `sync-just-options.md`. The sibling commands' section skeletons should also stay parallel to this file's.
 
 ### .gitattributes (conditional)
 
@@ -102,6 +103,10 @@ This template provides the foundation for:
 
 @.claude/includes/sync-git-test.md
 
+## Just recipe parameter options
+
+@.claude/includes/sync-just-options.md
+
 ## Workflow
 
 ### Step 1: Update This Template
@@ -133,7 +138,7 @@ If a child template has something better, work through these in order:
 
 ### Step 3: Push to All Projects
 
-For each project, check if foundational files match this template, run the stale-config scan and the ignore-file scan, and check the default git test. For the sibling templates, also diff the shared sync includes for byte-identity. Create tasks for mismatches.
+For each project, check if foundational files match this template, run the stale-config scan and the ignore-file scan, check the default git test, and run the just option audit. For the sibling templates, also diff the shared sync includes for byte-identity and verify that every shared include is referenced by the sibling command. Create tasks for mismatches.
 
 ## Creating tasks
 
