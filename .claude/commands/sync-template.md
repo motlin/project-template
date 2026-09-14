@@ -108,6 +108,10 @@ This template provides the foundation for:
 
 @.claude/includes/sync-stale-configs.md
 
+## Git ignore files
+
+@.claude/includes/sync-gitignore.md
+
 ## Default git test
 
 @.claude/includes/sync-git-test.md
@@ -144,7 +148,7 @@ If a child template has something better:
 ### Step 3: Push to All Projects
 
 For each project, check if foundational files match this template, run the stale-config
-scan, and check the default git test. For the sibling templates, also diff the shared
+scan and the ignore-file scan, and check the default git test. For the sibling templates, also diff the shared
 sync includes for byte-identity. Create tasks for mismatches.
 
 ## Creating tasks
