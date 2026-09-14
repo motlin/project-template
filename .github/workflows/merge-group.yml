@@ -32,6 +32,9 @@ jobs:
   # Lint markdown files
   reviewdog-markdownlint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -46,6 +49,9 @@ jobs:
   # Lint YAML files
   reviewdog-yamllint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -60,6 +66,9 @@ jobs:
   # Lint GitHub Actions workflow files
   reviewdog-actionlint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -87,10 +96,25 @@ jobs:
 
   # Gate job that requires all checks to pass
   # Derived templates should add their language-specific jobs to the 'needs' array
+  reviewdog-shellcheck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: reviewdog/action-shellcheck@3cc162a8c30b193fe8059889b47b2732c4d7010c # v1.33.0
+        with:
+          reporter: github-pr-check
+          filter_mode: nofilter
+
   all-checks:
     name: All checks
     if: always()
-    needs: [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint, zizmor]
+    needs: [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint, reviewdog-shellcheck, zizmor]
     runs-on: ubuntu-latest
     steps:
       - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
