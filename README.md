@@ -8,6 +8,7 @@ This template extracts common, language-agnostic configuration into a single ref
 
 - Standard pre-commit hooks for file hygiene
 - Universal formatting via oxfmt and markdown linting
+- Just formatting for root justfiles and `.just` modules
 - Common gitignore patterns
 - Git line ending normalization
 - GitHub Actions workflow patterns
@@ -35,14 +36,16 @@ Base hooks from `pre-commit/pre-commit-hooks`:
 
 Local hooks for the file types every project has:
 
-| Hook                | Purpose                                            |
-| ------------------- | -------------------------------------------------- |
-| `oxfmt`             | Format markdown, json, yaml, and toml via `vp fmt` |
-| `markdownlint-cli2` | Lint markdown against `.markdownlint.jsonc`        |
+| Hook                | Purpose                                                    |
+| ------------------- | ---------------------------------------------------------- |
+| `oxfmt`             | Format markdown, json, yaml, and toml via `vp fmt`         |
+| `markdownlint-cli2` | Lint markdown against `.markdownlint.jsonc`                |
+| `just-fmt`          | Format changed `justfile`, `.justfile`, and `*.just` files |
 
 **Hook conventions:**
 
 - Hooks run on changed files, not all files: keep pre-commit's default `pass_filenames: true` for every formatter and linter.
+- `just-fmt` invokes `just --fmt --justfile` separately for each matching filename, without formatting unchanged imports. It uses the Just version pinned in `.mise/config.toml`. Run `pre-commit run just-fmt --all-files` for an explicit whole-repository formatting pass; `just verify` and CI include it with the other hooks.
 - Because hooks receive arbitrary changed-file batches, every formatter and linter must skip file types it does not handle instead of erroring. Use the tool's flag for this: `--no-error-on-unmatched-pattern` for oxfmt, `--ignore-unknown` for prettier, or the equivalent for any new tool.
 
 **Extending:** Add language-specific hooks (eslint for TypeScript, cargo fmt and clippy for Rust) in derived templates.
