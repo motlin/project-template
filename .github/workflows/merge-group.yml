@@ -37,7 +37,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: reviewdog/action-markdownlint@6f0e0e8703a9e840ffefa37a2775832c51c1c640 # v0.28.0
+      - uses: reviewdog/action-markdownlint@a223028b797326efe9d3c9b55e24d740480c3352 # v0.31.2
         with:
           reporter: github-pr-check
           fail_on_error: true
@@ -93,6 +93,6 @@ jobs:
     needs: [pre-commit, reviewdog-markdownlint, reviewdog-yamllint, reviewdog-actionlint, zizmor]
     runs-on: ubuntu-latest
     steps:
-      - uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # release/v1
+      - uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
         with:
           jobs: ${{ toJSON(needs) }}
