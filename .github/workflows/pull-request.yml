@@ -21,7 +21,7 @@ jobs:
 
   # Auto-merge Dependabot PRs after CI passes
   automerge-bots:
-    if: contains(fromJSON('[\"dependabot[bot]\", \"renovate[bot]\"]'), github.event.pull_request.user.login)
+    if: contains(fromJSON('["dependabot[bot]", "renovate[bot]"]'), github.event.pull_request.user.login)
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
