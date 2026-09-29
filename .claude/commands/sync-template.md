@@ -5,9 +5,7 @@ argument-hint: [project-name|all]
 
 # Project Template Sync
 
-This is the base template for all projects. It manages foundational files that every
-project should have, and it is the source of truth for the sync system shared by the
-sibling templates.
+This is the base template for all projects. It manages foundational files that every project should have, and it is the source of truth for the sync system shared by the sibling templates.
 
 Template path: !`pwd`
 
@@ -22,23 +20,15 @@ Template path: !`pwd`
 - `LICENSE` — Apache 2.0 license
 - `README.md` — project documentation structure
 - `.github/` — workflow patterns common to all projects
-- Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`,
-  `npm:vite-plus` — language-specific templates manage other tools
+- Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:vite-plus` — language-specific templates manage other tools
 
 ### Derived-template ownership
 
-Before scanning projects, read each sibling template's managed paths and project list.
-For a project owned by a sibling template, delegate overlapping paths to that sibling;
-this command owns only the remaining foundational paths. When updating a sibling
-template itself, preserve its documented language-specific specializations.
+Before scanning projects, read each sibling template's managed paths and project list. For a project owned by a sibling template, delegate overlapping paths to that sibling; this command owns only the remaining foundational paths. When updating a sibling template itself, preserve its documented language-specific specializations.
 
 ### Shared sync includes
 
-The `.claude/includes/sync-*.md` files are shared by every sibling template's
-sync-template command and must be byte-identical in every template repo. During
-Step 3, diff each sibling template's copies against this template's and stage a
-task on any difference. The sibling commands' section skeletons should also stay
-parallel to this file's.
+The `.claude/includes/sync-*.md` files are shared by every sibling template's sync-template command and must be byte-identical in every template repo. During Step 3, diff each sibling template's copies against this template's and stage a task on any difference. The sibling commands' section skeletons should also stay parallel to this file's.
 
 ### .gitattributes (conditional)
 
@@ -51,8 +41,7 @@ parallel to this file's.
     * text=auto eol=lf
     ```
 
-- **Only if** the repo has tracked `*.bat` or `*.cmd` files (`git ls-files '*.bat' '*.cmd'`),
-  append:
+- **Only if** the repo has tracked `*.bat` or `*.cmd` files (`git ls-files '*.bat' '*.cmd'`), append:
 
     ```gitattributes
     # Windows batch files need CRLF
@@ -67,11 +56,9 @@ parallel to this file's.
     /.idea/** linguist-generated=false
     ```
 
-- **Preserve** any project-specific rules already present (e.g. `dist/** -diff`,
-  `.beads/issues.jsonl merge=beads`, language-specific `eol` overrides).
+- **Preserve** any project-specific rules already present (e.g. `dist/** -diff`, `.beads/issues.jsonl merge=beads`, language-specific `eol` overrides).
 
-The base template's own `.gitattributes` contains only the base block because it has no
-`.bat`/`.cmd`/`.idea` files.
+The base template's own `.gitattributes` contains only the base block because it has no `.bat`/`.cmd`/`.idea` files.
 
 ## Version policy
 
@@ -83,8 +70,7 @@ The base template's own `.gitattributes` contains only the base block because it
 
 @.claude/includes/sync-project-list.md
 
-This template's scope is every project in `~/projects`, so its `.llm/projects.yaml`
-uses `scan` and `skip` instead of an explicit `own` list:
+This template's scope is every project in `~/projects`, so its `.llm/projects.yaml` uses `scan` and `skip` instead of an explicit `own` list:
 
 ```yaml
 scan: ~/projects
@@ -139,17 +125,15 @@ Check typescript-template, rust-template, and java-template for any foundational
 - Improved pre-commit hooks or formatter settings
 - New GitHub workflow patterns
 
-If a child template has something better:
+If a child template has something better, work through these in order:
 
-1. Verify it's a general improvement (not language-specific)
-2. Update this template
-3. Push to all other projects
+- Verify it's a general improvement (not language-specific)
+- Update this template
+- Push to all other projects
 
 ### Step 3: Push to All Projects
 
-For each project, check if foundational files match this template, run the stale-config
-scan and the ignore-file scan, and check the default git test. For the sibling templates, also diff the shared
-sync includes for byte-identity. Create tasks for mismatches.
+For each project, check if foundational files match this template, run the stale-config scan and the ignore-file scan, and check the default git test. For the sibling templates, also diff the shared sync includes for byte-identity. Create tasks for mismatches.
 
 ## Creating tasks
 

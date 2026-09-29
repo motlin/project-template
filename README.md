@@ -120,9 +120,9 @@ Main branch jobs:
 
 This template uses a **copy-and-extend** pattern rather than inheritance. Language-specific templates should:
 
-1. **Copy** configuration files from this template
-2. **Extend** by adding language-specific content
-3. **Document** deviations from the base template
+- **Copy** configuration files from this template
+- **Extend** by adding language-specific content
+- **Document** deviations from the base template
 
 ### Why Copy-and-Extend?
 
@@ -133,11 +133,11 @@ This template uses a **copy-and-extend** pattern rather than inheritance. Langua
 
 ### Updating from Base Template
 
-When project-template is updated:
+When project-template is updated, work through these in order:
 
-1. Review the changes in project-template
-2. Manually apply relevant changes to derived templates
-3. Test to ensure compatibility
+- Review the changes in project-template
+- Manually apply relevant changes to derived templates
+- Test to ensure compatibility
 
 ### Alternatives Considered
 
@@ -169,9 +169,11 @@ Templates that extend this base:
 
 ## Creating a New Language Template
 
-1. Create a new repository
-2. Copy all files from project-template
-3. Add language-specific configuration:
+Work through these in order:
+
+- Create a new repository
+- Copy all files from project-template
+- Add language-specific configuration:
     - Extend `.pre-commit-config.yaml` with formatters/linters
     - Extend `.gitignore` with build artifacts
     - Add package ecosystem to `.github/dependabot.yml`
@@ -179,8 +181,8 @@ Templates that extend this base:
     - Update `all-checks.needs` array
     - Add auto-fix jobs to `.github/workflows/pull-request.yml`
     - Replace placeholder in `.github/workflows/push.yml`
-4. Add language-specific files (package.json, pom.xml, etc.)
-5. Update README.md with language-specific documentation
+- Add language-specific files (package.json, pom.xml, etc.)
+- Update README.md with language-specific documentation
 
 ## License
 
