@@ -175,6 +175,11 @@ Templates that extend this base:
     - Adds: maven ecosystem to dependabot
     - Adds: maven-test, reviewdog jobs
 
+- **playdate-template**: Playdate games in Lua
+    - Adds: StyLua hook, with check-json skipping VS Code's commented settings files
+    - Adds: Lua 5.4 and StyLua through mise; busted and luacheck through luarocks
+    - Adds: stylua, luacheck, busted jobs
+
 ## Creating a New Language Template
 
 Work through these in order:

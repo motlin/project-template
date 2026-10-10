@@ -90,6 +90,7 @@ This template provides the foundation for:
 - ~/projects/typescript-template (extends with TypeScript/Node tools)
 - ~/projects/rust-template (extends with Rust/Cargo tools)
 - ~/projects/java-template (extends with Java/Maven tools)
+- ~/projects/playdate-template (extends with Playdate SDK and Lua tools)
 
 ## Stale and conflicting tool configs
 
@@ -124,7 +125,7 @@ Ensure foundational files are up to date:
 
 ### Step 2: Pull Improvements from Children
 
-Check typescript-template, rust-template, and java-template for any foundational improvements:
+Check typescript-template, rust-template, java-template, and playdate-template for any foundational improvements:
 
 - Better .gitignore patterns
 - Improved pre-commit hooks or formatter settings
