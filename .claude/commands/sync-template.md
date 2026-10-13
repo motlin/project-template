@@ -22,6 +22,8 @@ Template path: !`pwd`
 - `.github/` — workflow patterns common to all projects
 - Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:vite-plus` — language-specific templates manage other tools
 
+`scripts/audit-just-options.py` and its `audit-just-options` justfile recipe stay in the template. The sync runs the audit against each sibling from here; do not copy the script or the recipe into siblings.
+
 ### Derived-template ownership
 
 Before scanning projects, read each sibling template's managed paths and project list. For a project owned by a sibling template, delegate overlapping paths to that sibling; this command owns only the remaining foundational paths. When updating a sibling template itself, preserve its documented language-specific specializations.
