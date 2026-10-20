@@ -17,7 +17,7 @@ Template path: !`pwd`
 - `vite.config.ts` — oxfmt formatting settings in the `fmt` block (tabs, width 120)
 - `.markdownlint.jsonc` / `.markdownlint-cli2.jsonc` — Markdown lint rules
 - `.yamllint.yaml` — YAML lint rules
-- `LICENSE` — Apache 2.0 license
+- `LICENSE` — Apache 2.0 license, except in forks of another owner's project (see the license task template)
 - `README.md` — project documentation structure
 - `.github/` — workflow patterns common to all projects
 - Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:vite-plus` — language-specific templates manage other tools
@@ -167,6 +167,8 @@ Pin just version (currently "latest")
 ```
 
 **License update:**
+
+Skip this task for a fork of another owner's project, such as one with an `upstream` remote pointing at a different owner or one that `gh repo view --json isFork` reports as a fork. The fork keeps the upstream's license terms, or none if the upstream has no license, and we cannot relicense it. Never add or replace its LICENSE.
 
 ```
 Update LICENSE to Apache 2.0
