@@ -1,201 +1,31 @@
 # Project Template
 
-A language-agnostic base template containing universal configuration patterns for software projects. Language-specific templates (TypeScript, Java, etc.) should use this as a reference and extend its patterns.
+A language-agnostic base template for setting up a new project, and for keeping many projects in sync so they stay similar over time.
 
-## Purpose
+## Who It Is For
 
-This template extracts common, language-agnostic configuration into a single reference. It provides:
+Use this template if you maintain several repositories and want them to share the same file hygiene, formatting, linting, CI, and dependency-update setup without maintaining each one by hand.
 
-- Standard pre-commit hooks for file hygiene
-- Universal formatting via oxfmt and markdown linting
-- Just formatting for root justfiles and `.just` modules
-- Common gitignore patterns
-- Git line ending normalization
-- GitHub Actions workflow patterns
-- Dependabot configuration structure
+## What It Covers
 
-## Configuration Files
+- Pre-commit hooks for file hygiene, formatting, and linting
+- Formatting and Markdown linting shared by every project
+- Common `.gitignore` and `.gitattributes` patterns
+- A `justfile` with shared recipes
+- GitHub Actions workflows for pull requests, merge queues, and pushes to main
+- Dependabot configuration for GitHub Actions
+- Tool versions managed through mise
 
-### `.pre-commit-config.yaml`
+## How It Relates to Other Templates
 
-Base hooks from `pre-commit/pre-commit-hooks`:
+This is the base. Language-specific templates copy its files and extend them with their own toolchains:
 
-| Hook                      | Purpose                                    |
-| ------------------------- | ------------------------------------------ |
-| `check-yaml`              | Validate YAML syntax                       |
-| `check-json`              | Validate JSON syntax                       |
-| `check-toml`              | Validate TOML syntax                       |
-| `check-xml`               | Validate XML syntax                        |
-| `end-of-file-fixer`       | Ensure files end with newline              |
-| `trailing-whitespace`     | Remove trailing whitespace                 |
-| `check-added-large-files` | Prevent large files (>1MB)                 |
-| `check-case-conflict`     | Detect case-insensitive filename conflicts |
-| `check-merge-conflict`    | Detect merge conflict markers              |
-| `detect-private-key`      | Prevent committing private keys            |
-| `mixed-line-ending`       | Normalize to LF line endings               |
-
-Local hooks for the file types every project has:
-
-| Hook                | Purpose                                                    |
-| ------------------- | ---------------------------------------------------------- |
-| `oxfmt`             | Format markdown, json, yaml, and toml via `vp fmt`         |
-| `markdownlint-cli2` | Lint markdown against `.markdownlint.jsonc`                |
-| `just-fmt`          | Format changed `justfile`, `.justfile`, and `*.just` files |
-
-**Hook conventions:**
-
-- Hooks run on changed files, not all files: keep pre-commit's default `pass_filenames: true` for every formatter and linter.
-- `just-fmt` invokes `just --fmt --justfile` separately for each matching filename, without formatting unchanged imports. It uses the Just version pinned in `.mise/config.toml`. Run `pre-commit run just-fmt --all-files` for an explicit whole-repository formatting pass; `just verify` and CI include it with the other hooks.
-- Because hooks receive arbitrary changed-file batches, every formatter and linter must skip file types it does not handle instead of erroring. Use the tool's flag for this: `--no-error-on-unmatched-pattern` for oxfmt, `--ignore-unknown` for prettier, or the equivalent for any new tool.
-
-**Extending:** Add language-specific hooks (eslint for TypeScript, cargo fmt and clippy for Rust) in derived templates.
-
-### `vite.config.ts`
-
-Formatting configuration for oxfmt (`vp fmt`) in the `fmt` block: tabs (`useTabs` with `tabWidth` 4), print width 120, double quotes. A plain object export keeps it working without `node_modules`; vite-plus comes from mise. Note `vp fmt` ignores `.oxfmtrc.json` — the config must live in `vite.config.ts`.
-
-Tabs are the standard across all templates; the exceptions are YAML (tabs are illegal) and markdown list indentation (oxfmt emits 4 spaces, matched by `MD007` in `.markdownlint.jsonc`).
-
-**Extending:** Projects with a real Vite+ setup use `defineConfig` from `vite-plus` and add their build configuration alongside the `fmt` block.
-
-### `.gitignore`
-
-Common patterns:
-
-- Editor/IDE files (.idea, .vscode user files)
-- macOS files (.DS_Store)
-- Environment files (.envrc, .env)
-- LLM context directories (.llm/, .claude/)
-
-**Extending:** Add language-specific patterns (node_modules, target/, dist/).
-
-### `.gitattributes`
-
-- Normalize text files to LF
-- Windows batch files use CRLF
-- `.idea/` directory not marked as linguist-generated
-
-### `justfile`
-
-Public singular recipe parameters are command-line options with help text. Use lowercase kebab-case long options, such as `--output-file`, or an intentional short option. Model boolean behavior as semantic value-less flags such as `--warn`, `--quick`, or `--no-clean`.
-
-Private helper parameters and variadic passthrough parameters remain positional. Dependency expressions inside justfiles also remain positional; command-line callers use the option syntax.
-
-Run `just audit-just-options` to inspect every tracked root and nested justfile. Imported `.just` modules are included in each justfile's JSON dump.
-
-### `.github/dependabot.yml`
-
-Base configuration for GitHub Actions updates:
-
-- Daily updates at 7:00 AM ET
-- 25 open PR limit
-- Commit message prefix: "dependabot"
-
-**Extending:** Add language-specific ecosystems (npm, maven).
-
-### `.github/workflows/`
-
-#### `merge-group.yml`
-
-Jobs that run on both `pull_request` and `merge_group`:
-
-- `pre-commit`: Run pre-commit hooks
-- `reviewdog-markdownlint`: Lint markdown files
-- `reviewdog-yamllint`: Lint YAML files
-- `reviewdog-actionlint`: Lint GitHub Actions workflows
-- `all-checks`: Gate job using `re-actors/alls-green`
-
-**Extending:** Add language-specific jobs (lint, typecheck, test, build) and add them to `all-checks.needs`.
-
-#### `pull-request.yml`
-
-PR-specific jobs:
-
-- `forbid-merge-commits`: Enforce rebase workflow
-- `automerge-dependabot`: Auto-merge Dependabot PRs
-
-**Extending:** Add auto-fix jobs (eslint-fix, biome-fix, prettier-fix).
-
-#### `push.yml`
-
-Main branch jobs:
-
-- Placeholder verify job
-
-**Extending:** Replace with actual build/deploy jobs.
-
-## Extension Mechanism
-
-This template uses a **copy-and-extend** pattern rather than inheritance. Language-specific templates should:
-
-- **Copy** configuration files from this template
-- **Extend** by adding language-specific content
-- **Document** deviations from the base template
-
-### Why Copy-and-Extend?
-
-- **Simplicity**: No complex inheritance mechanism to maintain
-- **Flexibility**: Each template can customize freely
-- **Clarity**: All configuration visible in one place
-- **Independence**: Templates evolve at their own pace
-
-### Updating from Base Template
-
-When project-template is updated, work through these in order:
-
-- Review the changes in project-template
-- Manually apply relevant changes to derived templates
-- Test to ensure compatibility
-
-### Alternatives Considered
-
-| Mechanism       | Pros                          | Cons                           |
-| --------------- | ----------------------------- | ------------------------------ |
-| Git subtree     | Automatic updates             | Complex merge conflicts        |
-| Git submodule   | Version pinning               | Extra clone step, confusing UX |
-| Symlinks        | Always in sync                | Breaks GitHub template repos   |
-| Copy-and-extend | Simple, flexible, independent | Manual update propagation      |
-
-## Derived Templates
-
-Templates that extend this base:
-
-- **typescript-template**: TypeScript/Node.js projects
-    - Adds: the full Vite+ toolchain (`vp check`, `vp fmt`, `vp lint`)
-    - Adds: npm ecosystem to dependabot
-    - Adds: lint, typecheck, test, build jobs
-
+- **typescript-template**: TypeScript and Node.js projects
 - **rust-template**: Rust projects
-    - Adds: cargo fmt (`hard_tabs`) and clippy hooks
-    - Adds: cargo ecosystem to dependabot
-    - Adds: nextest, llvm-cov jobs
-
-- **java-template**: Java/Maven projects
-    - Adds: biome (JSON only), prettier hooks
-    - Adds: maven ecosystem to dependabot
-    - Adds: maven-test, reviewdog jobs
-
+- **java-template**: Java and Maven projects
 - **playdate-template**: Playdate games in Lua
-    - Adds: StyLua hook, with check-json skipping VS Code's commented settings files
-    - Adds: Lua 5.4 and StyLua through mise; busted and luacheck through luarocks
-    - Adds: stylua, luacheck, busted jobs
 
-## Creating a New Language Template
-
-Work through these in order:
-
-- Create a new repository
-- Copy all files from project-template
-- Add language-specific configuration:
-    - Extend `.pre-commit-config.yaml` with formatters/linters
-    - Extend `.gitignore` with build artifacts
-    - Add package ecosystem to `.github/dependabot.yml`
-    - Add build/test jobs to `.github/workflows/merge-group.yml`
-    - Update `all-checks.needs` array
-    - Add auto-fix jobs to `.github/workflows/pull-request.yml`
-    - Replace placeholder in `.github/workflows/push.yml`
-- Add language-specific files (package.json, pom.xml, etc.)
-- Update README.md with language-specific documentation
+Templates use a copy-and-extend pattern rather than inheritance (git subtree, submodules, or symlinks). Each template stays simple and independent, at the cost of propagating updates manually. A sync command in this repository copies changes from the base out to derived templates and projects.
 
 ## License
 
