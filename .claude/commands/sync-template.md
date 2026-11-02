@@ -14,13 +14,13 @@ Template path: !`pwd`
 - `.gitignore` — Git ignore patterns
 - `.prettierignore` — oxfmt exclusions loaded alongside `.gitignore`
 - `.pre-commit-config.yaml` — file hygiene, oxfmt, and markdownlint hooks
-- `vite.config.ts` — oxfmt formatting settings in the `fmt` block (tabs, width 120)
+- `.oxfmtrc.json` — oxfmt-next-line formatting settings (next-line braces, tabs, width 120)
 - `.markdownlint.jsonc` / `.markdownlint-cli2.jsonc` — Markdown lint rules
 - `.yamllint.yaml` — YAML lint rules
 - `LICENSE` — Apache 2.0 license, except in forks of another owner's project (see the license task template)
 - `README.md` — project documentation structure
 - `.github/` — workflow patterns common to all projects
-- Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:vite-plus` — language-specific templates manage other tools
+- Mise (if present): `just`, `pre-commit`, `node`, `npm:markdownlint-cli2`, `npm:oxfmt-next-line` — language-specific templates manage other tools
 
 `scripts/audit-just-options.py` and its `audit-just-options` justfile recipe stay in the template. The sync runs the audit against each sibling from here; do not copy the script or the recipe into siblings.
 

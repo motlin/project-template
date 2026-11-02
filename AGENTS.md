@@ -10,7 +10,7 @@ Language-agnostic base template. Derived templates (typescript, rust, java, play
 
 ## Formatting
 
-- oxfmt (`vp fmt`) reads its config from the `fmt` block in `vite.config.ts` and ignores `.oxfmtrc.json`. Keep it a plain object export so it works without `node_modules`; projects with a real Vite+ setup use `defineConfig` from `vite-plus`.
+- Formatting uses [oxfmt-next-line](https://www.npmjs.com/package/oxfmt-next-line), a fork of oxfmt that puts opening braces on their own line. It reads `.oxfmtrc.json`, and mise installs it, so it works without `node_modules`.
 - Tabs everywhere, except YAML (tabs are illegal) and Markdown list indentation (oxfmt emits 4 spaces, matched by `MD007` in `.markdownlint.jsonc`).
 
 ## Justfile Options
